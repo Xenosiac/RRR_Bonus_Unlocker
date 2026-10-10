@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rayman Raving Rabbids</title>
+<style>
+:root{
+  --bg:#3a0a48; --bg2:#5c1370; --glow:#c2278f;
+  --card:#4a1161; --card2:#3b0c4e; --line:#1b0422; --head:#5d1a78; --row:#42104f;
+  --ink:#ffffff; --muted:#e2c6f2; --yellow:#ffc21a; --black:#12031a; --ok:#6bf0b3; --warn:#ff9a8a;
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;color:var(--ink);font:16px/1.55 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif;padding:20px 16px 72px;
+  background:radial-gradient(1100px 520px at 18% -8%,var(--glow) 0,rgba(194,39,143,0) 70%),radial-gradient(900px 600px at 100% 0,var(--bg2) 0,rgba(92,19,112,0) 65%),var(--bg);
+  background-attachment:fixed}
+main{max-width:940px;margin:0 auto}
+.top{display:flex;justify-content:flex-end;margin-bottom:10px}
+.lang{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted)}
+select{font:inherit;color:var(--ink);background:var(--card2);border:2px solid var(--line);border-radius:10px;padding:6px 10px;cursor:pointer}
+.plate{display:inline-block;background:var(--yellow);color:var(--black);border:4px solid var(--black);border-radius:6px;padding:12px 22px 14px;
+  transform:rotate(-1.4deg);box-shadow:7px 7px 0 var(--black);margin:14px 0 22px}
+h1{margin:0;font:900 clamp(24px,5.2vw,38px)/1.1 "Arial Black","Segoe UI Black","Segoe UI",system-ui,sans-serif;letter-spacing:-.01em}
+h2{font:800 19px/1.25 "Arial Black","Segoe UI",system-ui,sans-serif;margin:0 0 12px;color:var(--yellow)}
+p{margin:0 0 12px}
+.lead{color:var(--muted);max-width:64ch;font-size:17px}
+code{background:var(--card2);border:1px solid var(--line);border-radius:6px;padding:1px 6px;color:var(--yellow);font-size:.92em}
+.card{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:22px;margin-top:22px;box-shadow:0 7px 0 var(--line)}
+.notice{border-left:6px solid var(--yellow);padding:4px 0 4px 16px;margin:22px 0}
+.notice b{color:var(--yellow)}
+.drop{display:block;border:3px dashed var(--yellow);border-radius:16px;padding:30px;text-align:center;cursor:pointer;background:rgba(18,3,26,.28)}
+.drop:hover,.drop.over{background:rgba(255,194,26,.14)}
+.drop input{position:absolute;opacity:0;width:1px;height:1px}
+.drop strong{display:block;font-size:20px;color:var(--yellow)}
+.drop span{color:var(--muted)}
+button{font:700 16px/1.2 inherit;font-family:inherit;cursor:pointer;border-radius:12px;border:2px solid var(--black);background:var(--yellow);color:var(--black);
+  padding:12px 18px;box-shadow:0 4px 0 var(--black);transition:transform .08s,box-shadow .08s}
+button:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 5px 0 var(--black)}
+button:active:not(:disabled){transform:translateY(3px);box-shadow:0 1px 0 var(--black)}
+button.ghost{background:transparent;color:var(--yellow);border-color:var(--yellow);box-shadow:none}
+button.ghost:hover:not(:disabled){background:rgba(255,194,26,.14);box-shadow:none;transform:none}
+button.small{padding:4px 12px;font-size:14px}
+button:disabled{opacity:.4;cursor:not-allowed}
+button:focus-visible,select:focus-visible,.drop:focus-within,input:focus-visible+span{outline:3px solid #fff;outline-offset:2px}
+.meter-num{font:900 clamp(38px,8vw,58px)/1.05 "Arial Black","Segoe UI Black",system-ui,sans-serif;color:var(--yellow);font-variant-numeric:tabular-nums;letter-spacing:-.02em;text-shadow:3px 3px 0 var(--black)}
+.meter-num small{font:600 20px/1 "Segoe UI",system-ui,sans-serif;color:var(--muted);text-shadow:none;letter-spacing:0}
+.meter{display:flex;gap:3px;margin:16px 0 8px;height:24px}
+.meter i{flex:1;background:var(--card2);border:1px solid var(--line);border-radius:3px}
+.meter i.on{background:var(--yellow);border-color:var(--black)}
+.meter i.new{background:var(--ok);border-color:var(--black)}
+.sub{color:var(--muted);font-size:14px}
+.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:18px}
+.slots{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
+.slots li{border:2px solid var(--line);background:var(--card2);border-radius:999px;padding:3px 14px;font-size:14px;color:var(--muted)}
+.slots li.main{border-color:var(--yellow);color:var(--ink);font-weight:700}
+.tools{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+label.chk{display:flex;gap:8px;align-items:center;font-size:15px;cursor:pointer}
+input[type=checkbox]{accent-color:var(--yellow);width:18px;height:18px}
+.tablewrap{overflow-x:auto;border:2px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums;font-size:15px}
+th,td{padding:8px 14px;text-align:right;white-space:nowrap}
+th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}
+thead th{background:var(--head);color:var(--yellow);font-weight:700}
+tbody tr:nth-child(even){background:var(--row)}
+td.chg{color:var(--ok);font-weight:700}
+td.full{color:var(--ok)}
+.msg{margin-top:16px;padding:12px 16px;border-radius:12px;background:var(--card2);border:2px solid var(--yellow)}
+.msg.err{border-color:var(--warn);color:var(--warn)}
+.hidden{display:none}
+ol.steps{padding-left:22px;margin:8px 0 0}
+ol.steps li{margin-bottom:8px}
+@media (prefers-reduced-motion:reduce){button{transition:none}}
+</style>
+</head>
+<body>
+<main>
+<div class="top">
+  <label class="lang"><span data-t="langLabel">Язык</span>
+    <select id="lang" aria-label="Language">
+      <option value="ru">Русский</option><option value="en">English</option><option value="de">Deutsch</option>
+      <option value="fr">Français</option><option value="es">Español</option><option value="it">Italiano</option>
+    </select>
+  </label>
+</div>
+
+<div class="plate"><h1 data-t="h1"></h1></div>
+<p class="lead" data-h="lead"></p>
+
+<p class="notice"><b data-t="noticeLead"></b> <span data-h="noticeText"></span></p>
+
+<label class="drop" id="drop">
+  <input type="file" id="file" accept=".sav,*/*">
+  <strong data-t="dropTitle"></strong>
+  <span data-t="dropSub"></span>
+</label>
+<div id="msg" class="msg hidden" role="status"></div>
+
+<section id="work" class="hidden">
+  <div class="card">
+    <h2 data-t="scoreTitle"></h2>
+    <div class="meter-num"><span id="tot">0</span> <small data-t="of"></small></div>
+    <div class="meter" id="meter" aria-hidden="true"></div>
+    <div class="sub" id="metersub"></div>
+    <div class="actions">
+      <button id="maxall" data-t="maxall"></button>
+      <button id="dl" disabled data-t="dl"></button>
+      <button id="reset" class="ghost" disabled data-t="reset"></button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="tools">
+      <h2 style="margin:0" data-t="gamesTitle"></h2>
+      <label class="chk"><input type="checkbox" id="onlyinc" checked> <span data-t="onlyInc"></span></label>
+    </div>
+    <div class="tablewrap"><table>
+      <thead><tr><th data-t="thGame"></th><th data-t="thMode"></th><th data-t="thRecord"></th><th data-t="thWas"></th><th data-t="thNow"></th><th></th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table></div>
+    <p class="sub" style="margin-top:12px" data-t="foot"></p>
+  </div>
+
+  <div class="card">
+    <h2 data-t="slotsTitle"></h2>
+    <ul class="slots" id="slots"></ul>
+    <h2 style="margin-top:22px" data-t="afterTitle"></h2>
+    <ol class="steps"><li data-t="step1"></li><li data-t="step2"></li></ol>
+  </div>
+</section>
+</main>
+
+<script>
+// CORE-START
+const SLOT=70976, DESC=256, NSLOTS=5, BODYLEN=SLOT*NSLOTS;
+const OFF_REC=7724, OFF_PN=2188;
+const MAXS=[28000.0, 36000.0, 34000.0, 30000.0, 28000.0, 28000.0, 27000.0, 308.0, 33000.0, 38000.0, 210.0, 395.0, 255.0, 150.0, 235.0, 155.0, 285.0, 312.0, 295.0, 340.0, 20000.0, 24.0, 145.0, 80.0, 10.0, 130.0, 0.10000000149011612, 10.0, 55.0, 85.0, 170.0, 32.0, 10200.0, 470.0, 3000.0, 3100.0, 20.5, 3178.0, 800.0, 4088.0, 88.0, 90.0, 55.0, 30.0, 1868.0, 40.0, 400.0, 1000.0, 4000.0, 60.0, 10.0, 43.0, 11.0, 3000.0, 30.0, 85.0, 275.0, 3000.0, 1300.0, 21.0, 23.0, 600.0, 400.0, 1000.0, 75000.0, 25000.0, 20.0, 14.0, 3000.0, 21.0, 5600.0, 3000.0, 39.5, 170.0, 800.0, 0.15000000596046448, 7600.0, 30.0, 2088.0, 2668.0, 3198.0, 2358.0, 2478.0, 2658.0, 2528.0, 2908.0, 2288.0, 3538.0, 2568.0, 2928.0, 155.0, 395.0, 257.0, 155.0, 207.0, 157.0, 287.0, 313.0, 297.0, 313.0, 28000.0, 36000.0, 34000.0, 30000.0, 28000.0, 28000.0, 27000.0, 28000.0, 33000.0, 38000.0, 22000.0, 30000.0, 28000.0, 24000.0, 22000.0, 22000.0, 12000.0, 22000.0, 24000.0, 32000.0, 3000.0, 5000.0, 5000.0, 5000.0, 5000.0, 10000.0, 10000.0, 10000.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 103.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], TYPES=[32786, 32786, 32786, 32786, 32786, 32786, 32786, 32786, 32786, 32786, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 32770, 32769, 32772, 32769, 9, 32769, 12, 9, 32769, 32769, 32772, 1, 32770, 32770, 33026, 32770, 1, 32906, 32770, 32906, 65, 65, 65, 65, 32906, 32777, 32778, 32770, 32770, 32769, 9, 65, 9, 33026, 32769, 32769, 32772, 33026, 32778, 1, 1, 32770, 32778, 32770, 32770, 32778, 1, 9, 33026, 1, 32770, 33026, 9, 32780, 32778, 12, 32778, 1, 32906, 32906, 32906, 32906, 32906, 32906, 32906, 32906, 32906, 32906, 32906, 32906, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 32794, 32794, 32794, 32794, 32794, 32794, 32794, 32794, 32794, 32794, 32786, 32786, 32786, 32786, 32786, 32786, 32786, 32786, 32786, 32786, 33026, 33026, 33026, 33026, 33026, 33026, 33026, 33026, 0, 0, 32794, 32794, 32794, 32794, 32794, 32794, 32794, 32794, 32794, 32794, 32778, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+const NGAMES=128, FULL_TOTAL=183000;
+const f32=Math.fround;
+function rotl8(v,r){r&=7;return r===0?v:(((v<<r)|(v>>(8-r)))&255);}
+function parseHeader(data){
+  const dv=new DataView(data.buffer,data.byteOffset,data.byteLength);
+  const magic=dv.getUint32(0,true);
+  if(magic!==0xC0DE1BAF){
+    if(magic===0xC0DE2BAF) throw new Error('E_MODE2');
+    throw new Error('E_NOSIG');
+  }
+  const L=data.length, keys=new Array(32).fill(0), b8=new Array(8).fill(0);
+  let l16=data[4]&15; if(l16===0||l16>L-36) l16=1;
+  let p=l16+4;
+  for(let i=0;i<8;i++){const v=data[p]; b8[i]=v&15; keys[i]=p; p=((v>>4)&15)+p;}
+  let l8=((L-8+4)&31)+1; const l9=L-8-28;
+  if(p+l8>=l9) l8=1;
+  p+=l8;
+  for(let i=0;i<24;i++){const b=data[p]; keys[i+8]=p; let step=(b%8)+1; if(p+step>=l9) step=1; p+=step;}
+  return {keys,b8,L};
+}
+function decodeSav(data){
+  const h=parseHeader(data); const out=new Uint8Array(h.L-4-32); let k=0,n=0;
+  for(let pos=4;pos<h.L;pos++){
+    if(k<32&&pos===h.keys[k]){k++;continue;}
+    const r=(8-(h.b8[n&7]&7))&7; out[n]=rotl8(data[pos],r); n++;
+  }
+  if(k!==32||n!==out.length) throw new Error('E_CORRUPT');
+  return out;
+}
+function encodeSav(orig,body){
+  const h=parseHeader(orig); const out=new Uint8Array(orig); let k=0,n=0;
+  if(body.length!==h.L-4-32) throw new Error('E_CORRUPT');
+  for(let pos=4;pos<h.L;pos++){
+    if(k<32&&pos===h.keys[k]){k++;continue;}
+    const r=(8-(h.b8[n&7]&7))&7; out[pos]=rotl8(body[n],(8-r)&7); n++;
+  }
+  return out;
+}
+function convertScore(mx,typ,mid,score){
+  if(typ&256) return Math.trunc(score);
+  if(mid===64){
+    let t=f32(score-50000); if(!(t>0)) t=0;
+    const r=f32(t/f32(mx-50000));
+    if(r>1) return 1000; if(r<0) return 0;
+    return Math.trunc(f32(r*1000));
+  }
+  if(score<0.001) return 0;
+  let r=((typ>>8)&128)===0?f32(mx/score):f32(score/mx);
+  r=r>1?1:(r<0?0:r);
+  return Math.trunc(f32(r*1000));
+}
+function slotName(body,slot){
+  let s='';for(let i=0;i<32;i++){const c=body[slot*SLOT+i]; if(!c)break; s+=String.fromCharCode(c);} return s;
+}
+function gameInfo(body,slot,mid){
+  const dv=new DataView(body.buffer,body.byteOffset,body.byteLength);
+  const ub=slot*SLOT+DESC, typ=TYPES[mid], mx=MAXS[mid], hb=(typ&0x8000)!==0;
+  const vals=[]; 
+  for(let k=0;k<3;k++){
+    const named=dv.getInt32(ub+OFF_PN+(mid*9+k*3)*4,true)>0;
+    if(named) vals.push(dv.getFloat32(ub+OFF_REC+(mid*3+k)*4,true));
+  }
+  let best=null,score;
+  if(vals.length){best=hb?Math.max(...vals):Math.min(...vals); score=best;}
+  else score=hb?0:1e14;
+  return {mid,typ,mx,hb,raw:(typ&256)!==0,best,points:convertScore(mx,typ,mid,f32(score)),maxPoints:convertScore(mx,typ,mid,mx)};
+}
+function totalPoints(body,slot){let t=0;for(let i=0;i<NGAMES;i++)t+=gameInfo(body,slot,i).points;return t;}
+function setGameMax(body,slot,mid){
+  const dv=new DataView(body.buffer,body.byteOffset,body.byteLength);
+  const ub=slot*SLOT+DESC;
+  dv.setFloat32(ub+OFF_REC+(mid*3)*4,MAXS[mid],true);
+  const pb=ub+OFF_PN+(mid*9)*4;
+  if(dv.getInt32(pb,true)<=0){dv.setInt32(pb,4176,true);dv.setInt32(pb+4,4172,true);dv.setInt32(pb+8,4145,true);}
+}
+function maxAll(body,slot){
+  let n=0;
+  for(let i=0;i<NGAMES;i++){const g=gameInfo(body,slot,i); if(g.points<g.maxPoints){setGameMax(body,slot,i);n++;}}
+  return n;
+}
+// CORE-END
+
+
+// ---------- языки ----------
+const LOC={ru:'ru-RU',en:'en-US',de:'de-DE',fr:'fr-FR',es:'es-ES',it:'it-IT'};
+const I18N={
+ru:{
+ langLabel:"Язык",
+ h1:"Очки бонусных уровней в Rayman Raving Rabbids",
+ lead:"Открой своё сохранение <code>Rayman4.sav</code>, выставь максимальные результаты во всех мини-играх (183 000 очков) и скачай готовый файл. Всё считается прямо в браузере, файл никуда не отправляется.",
+ noticeLead:"Перед началом:",
+ noticeText:"закрой игру и сохрани копию оригинального <code>Rayman4.sav</code> в другую папку. Если что-то пойдёт не так, достаточно вернуть копию на место.",
+ dropTitle:"Выбери файл Rayman4.sav", dropSub:"или перетащи его сюда",
+ scoreTitle:"Слот очков бонусных уровней", of:"из 183 000",
+ maxall:"Выставить максимум во всех играх", dl:"Скачать изменённое сохранение", reset:"Отменить правки",
+ gamesTitle:"Мини-игры", onlyInc:"Показывать только игры без максимума",
+ thGame:"Игра", thMode:"Как считается", thRecord:"Рекорд", thWas:"Было", thNow:"Станет",
+ foot:"Названия уровней в файле не хранятся, поэтому игры показаны по номерам. Номер совпадает с порядком мини-игр в сохранении.",
+ slotsTitle:"Слоты в файле", afterTitle:"После установки",
+ step1:"Скачай изменённый файл (он называется так же, как исходный) и положи его на место старого.",
+ step2:"Запусти игру и открой экстра-раздел. Если бонусы появились не сразу, пройди любой бонусный уровень один раз — игра пересчитает очки и выдаст награды.",
+ opened:"Файл «{n}» открыт.",
+ E_NOSIG:"Это не зашифрованное сохранение Rayman Raving Rabbids (нет сигнатуры в начале файла).",
+ E_MODE2:"Формат шифрования «режим 2» не поддерживается.",
+ E_CORRUPT:"Файл повреждён или имеет необычную структуру.",
+ E_SIZE:"Неожиданный размер файла. Нужен Rayman4.sav из версии Steam.",
+ E_VERIFY:"Проверка записи не прошла, файл не сохранён.",
+ modeRaw:"сумма очков", modeHigh:"чем больше, тем лучше", modeLow:"чем меньше, тем лучше",
+ nowIn:"Сейчас в файле: {a} очков",
+ delta:"Было {a} → станет {b} (зелёным отмечена прибавка)",
+ allMax:"Во всех играх уже максимум.",
+ gameN:"Игра {n}", btnMax:"Максимум",
+ slotStory:"История, профиль {n}", slotScore:"Очки бонусных уровней (правится здесь)", slotConfig:"Настройки",
+ maxDone:"Максимум выставлен в играх: {n}. Теперь скачай файл.",
+ resetDone:"Правки отменены.",
+ downloaded:"Файл «{n}» скачан и проверен. Положи его на место исходного сохранения."
+},
+en:{
+ langLabel:"Language",
+ h1:"Bonus level points in Rayman Raving Rabbids",
+ lead:"Open your <code>Rayman4.sav</code> save, set the maximum result in every mini-game (183,000 points) and download the finished file. Everything is calculated right in your browser; the file is never uploaded anywhere.",
+ noticeLead:"Before you start:",
+ noticeText:"close the game and keep a copy of the original <code>Rayman4.sav</code> in another folder. If anything goes wrong, just put the copy back.",
+ dropTitle:"Choose your Rayman4.sav file", dropSub:"or drag it here",
+ scoreTitle:"Bonus level points slot", of:"of 183,000",
+ maxall:"Set maximum in all games", dl:"Download modified save", reset:"Undo changes",
+ gamesTitle:"Mini-games", onlyInc:"Show only games below maximum",
+ thGame:"Game", thMode:"Scoring", thRecord:"Record", thWas:"Was", thNow:"Becomes",
+ foot:"Level names are not stored in the file, so games are listed by number. The number matches the order of mini-games in the save.",
+ slotsTitle:"Slots in the file", afterTitle:"After installing",
+ step1:"Download the modified file (it keeps the original name) and put it in place of the old one.",
+ step2:"Launch the game and open the extras section. If the bonuses don't show up right away, finish any bonus level once — the game will recalculate points and hand out rewards.",
+ opened:"File “{n}” opened.",
+ E_NOSIG:"This is not an encrypted Rayman Raving Rabbids save (the signature at the start of the file is missing).",
+ E_MODE2:"Encryption “mode 2” is not supported.",
+ E_CORRUPT:"The file is damaged or has an unusual structure.",
+ E_SIZE:"Unexpected file size. A Rayman4.sav from the Steam version is required.",
+ E_VERIFY:"Write check failed, the file was not saved.",
+ modeRaw:"sum of points", modeHigh:"higher is better", modeLow:"lower is better",
+ nowIn:"Currently in the file: {a} points",
+ delta:"Was {a} → will be {b} (green marks the gain)",
+ allMax:"Every game is already at maximum.",
+ gameN:"Game {n}", btnMax:"Maximum",
+ slotStory:"Story, profile {n}", slotScore:"Bonus level points (edited here)", slotConfig:"Settings",
+ maxDone:"Maximum set in {n} games. Now download the file.",
+ resetDone:"Changes undone.",
+ downloaded:"File “{n}” downloaded and verified. Put it in place of the original save."
+},
+de:{
+ langLabel:"Sprache",
+ h1:"Bonuslevel-Punkte in Rayman Raving Rabbids",
+ lead:"Öffne deinen Spielstand <code>Rayman4.sav</code>, setze in allen Minispielen das Höchstergebnis (183.000 Punkte) und lade die fertige Datei herunter. Alles wird direkt im Browser berechnet, die Datei wird nirgendwohin hochgeladen.",
+ noticeLead:"Bevor du anfängst:",
+ noticeText:"Schließe das Spiel und speichere eine Kopie der originalen <code>Rayman4.sav</code> in einem anderen Ordner. Wenn etwas schiefgeht, genügt es, die Kopie zurückzulegen.",
+ dropTitle:"Wähle deine Datei Rayman4.sav", dropSub:"oder ziehe sie hierher",
+ scoreTitle:"Slot für Bonuslevel-Punkte", of:"von 183.000",
+ maxall:"In allen Spielen Maximum setzen", dl:"Geänderten Spielstand herunterladen", reset:"Änderungen verwerfen",
+ gamesTitle:"Minispiele", onlyInc:"Nur Spiele unter dem Maximum anzeigen",
+ thGame:"Spiel", thMode:"Wertung", thRecord:"Rekord", thWas:"Vorher", thNow:"Danach",
+ foot:"Levelnamen werden in der Datei nicht gespeichert, deshalb sind die Spiele nummeriert. Die Nummer entspricht der Reihenfolge der Minispiele im Spielstand.",
+ slotsTitle:"Slots in der Datei", afterTitle:"Nach der Installation",
+ step1:"Lade die geänderte Datei herunter (sie behält den ursprünglichen Namen) und lege sie an die Stelle der alten.",
+ step2:"Starte das Spiel und öffne den Extras-Bereich. Falls die Boni nicht sofort erscheinen, schließe einmal ein beliebiges Bonuslevel ab – das Spiel berechnet die Punkte neu und vergibt die Belohnungen.",
+ opened:"Datei „{n}“ geöffnet.",
+ E_NOSIG:"Das ist kein verschlüsselter Rayman-Raving-Rabbids-Spielstand (die Signatur am Dateianfang fehlt).",
+ E_MODE2:"Die Verschlüsselung „Modus 2“ wird nicht unterstützt.",
+ E_CORRUPT:"Die Datei ist beschädigt oder hat eine ungewöhnliche Struktur.",
+ E_SIZE:"Unerwartete Dateigröße. Benötigt wird eine Rayman4.sav aus der Steam-Version.",
+ E_VERIFY:"Die Schreibprüfung ist fehlgeschlagen, die Datei wurde nicht gespeichert.",
+ modeRaw:"Punktesumme", modeHigh:"mehr ist besser", modeLow:"weniger ist besser",
+ nowIn:"Aktuell in der Datei: {a} Punkte",
+ delta:"Vorher {a} → danach {b} (Grün markiert den Zuwachs)",
+ allMax:"In allen Spielen ist bereits das Maximum erreicht.",
+ gameN:"Spiel {n}", btnMax:"Maximum",
+ slotStory:"Story, Profil {n}", slotScore:"Bonuslevel-Punkte (wird hier bearbeitet)", slotConfig:"Einstellungen",
+ maxDone:"Maximum in {n} Spielen gesetzt. Lade jetzt die Datei herunter.",
+ resetDone:"Änderungen verworfen.",
+ downloaded:"Datei „{n}“ heruntergeladen und geprüft. Lege sie an die Stelle des ursprünglichen Spielstands."
+},
+fr:{
+ langLabel:"Langue",
+ h1:"Points des niveaux bonus dans Rayman Raving Rabbids",
+ lead:"Ouvre ta sauvegarde <code>Rayman4.sav</code>, mets le meilleur résultat dans tous les mini-jeux (183 000 points) et télécharge le fichier modifié. Tout est calculé directement dans ton navigateur, le fichier n'est envoyé nulle part.",
+ noticeLead:"Avant de commencer :",
+ noticeText:"ferme le jeu et garde une copie du <code>Rayman4.sav</code> d'origine dans un autre dossier. En cas de problème, il suffit de remettre la copie en place.",
+ dropTitle:"Choisis ton fichier Rayman4.sav", dropSub:"ou glisse-le ici",
+ scoreTitle:"Emplacement des points des niveaux bonus", of:"sur 183 000",
+ maxall:"Mettre le maximum dans tous les jeux", dl:"Télécharger la sauvegarde modifiée", reset:"Annuler les modifications",
+ gamesTitle:"Mini-jeux", onlyInc:"Afficher seulement les jeux sous le maximum",
+ thGame:"Jeu", thMode:"Calcul", thRecord:"Record", thWas:"Avant", thNow:"Après",
+ foot:"Les noms des niveaux ne sont pas stockés dans le fichier ; les jeux sont donc indiqués par numéro. Le numéro correspond à l'ordre des mini-jeux dans la sauvegarde.",
+ slotsTitle:"Emplacements du fichier", afterTitle:"Après l'installation",
+ step1:"Télécharge le fichier modifié (il garde son nom d'origine) et place-le à la place de l'ancien.",
+ step2:"Lance le jeu et ouvre la section des extras. Si les bonus n'apparaissent pas tout de suite, termine une fois n'importe quel niveau bonus : le jeu recalculera les points et accordera les récompenses.",
+ opened:"Fichier « {n} » ouvert.",
+ E_NOSIG:"Ce n'est pas une sauvegarde chiffrée de Rayman Raving Rabbids (la signature au début du fichier est absente).",
+ E_MODE2:"Le chiffrement « mode 2 » n'est pas pris en charge.",
+ E_CORRUPT:"Le fichier est endommagé ou a une structure inhabituelle.",
+ E_SIZE:"Taille de fichier inattendue. Il faut un Rayman4.sav de la version Steam.",
+ E_VERIFY:"La vérification de l'écriture a échoué, le fichier n'a pas été enregistré.",
+ modeRaw:"somme des points", modeHigh:"plus c'est haut, mieux c'est", modeLow:"plus c'est bas, mieux c'est",
+ nowIn:"Actuellement dans le fichier : {a} points",
+ delta:"Avant {a} → après {b} (le vert indique le gain)",
+ allMax:"Tous les jeux sont déjà au maximum.",
+ gameN:"Jeu {n}", btnMax:"Maximum",
+ slotStory:"Histoire, profil {n}", slotScore:"Points des niveaux bonus (modifié ici)", slotConfig:"Paramètres",
+ maxDone:"Maximum appliqué dans {n} jeux. Télécharge maintenant le fichier.",
+ resetDone:"Modifications annulées.",
+ downloaded:"Fichier « {n} » téléchargé et vérifié. Place-le à la place de la sauvegarde d'origine."
+},
+es:{
+ langLabel:"Idioma",
+ h1:"Puntos de los niveles extra en Rayman Raving Rabbids",
+ lead:"Abre tu partida guardada <code>Rayman4.sav</code>, pon el resultado máximo en todos los minijuegos (183.000 puntos) y descarga el archivo terminado. Todo se calcula en tu navegador; el archivo no se envía a ningún sitio.",
+ noticeLead:"Antes de empezar:",
+ noticeText:"cierra el juego y guarda una copia del <code>Rayman4.sav</code> original en otra carpeta. Si algo sale mal, basta con devolver la copia a su sitio.",
+ dropTitle:"Elige tu archivo Rayman4.sav", dropSub:"o arrástralo aquí",
+ scoreTitle:"Ranura de puntos de los niveles extra", of:"de 183.000",
+ maxall:"Poner el máximo en todos los juegos", dl:"Descargar la partida modificada", reset:"Deshacer cambios",
+ gamesTitle:"Minijuegos", onlyInc:"Mostrar solo los juegos por debajo del máximo",
+ thGame:"Juego", thMode:"Puntuación", thRecord:"Récord", thWas:"Antes", thNow:"Después",
+ foot:"Los nombres de los niveles no se guardan en el archivo, así que los juegos se muestran por número. El número coincide con el orden de los minijuegos en la partida.",
+ slotsTitle:"Ranuras del archivo", afterTitle:"Después de instalarlo",
+ step1:"Descarga el archivo modificado (conserva el nombre original) y colócalo en lugar del antiguo.",
+ step2:"Inicia el juego y abre la sección de extras. Si los extras no aparecen enseguida, completa una vez cualquier nivel extra: el juego recalculará los puntos y entregará las recompensas.",
+ opened:"Archivo «{n}» abierto.",
+ E_NOSIG:"Esto no es una partida cifrada de Rayman Raving Rabbids (falta la firma al inicio del archivo).",
+ E_MODE2:"El cifrado «modo 2» no es compatible.",
+ E_CORRUPT:"El archivo está dañado o tiene una estructura inusual.",
+ E_SIZE:"Tamaño de archivo inesperado. Se necesita un Rayman4.sav de la versión de Steam.",
+ E_VERIFY:"La comprobación de escritura falló y el archivo no se guardó.",
+ modeRaw:"suma de puntos", modeHigh:"más es mejor", modeLow:"menos es mejor",
+ nowIn:"Ahora en el archivo: {a} puntos",
+ delta:"Antes {a} → después {b} (en verde, lo ganado)",
+ allMax:"Todos los juegos ya están al máximo.",
+ gameN:"Juego {n}", btnMax:"Máximo",
+ slotStory:"Historia, perfil {n}", slotScore:"Puntos de niveles extra (se edita aquí)", slotConfig:"Ajustes",
+ maxDone:"Máximo aplicado en {n} juegos. Ahora descarga el archivo.",
+ resetDone:"Cambios deshechos.",
+ downloaded:"Archivo «{n}» descargado y comprobado. Colócalo en lugar de la partida original."
+},
+it:{
+ langLabel:"Lingua",
+ h1:"Punti dei livelli bonus in Rayman Raving Rabbids",
+ lead:"Apri il tuo salvataggio <code>Rayman4.sav</code>, imposta il risultato massimo in tutti i minigiochi (183.000 punti) e scarica il file finito. Tutto viene calcolato nel browser; il file non viene inviato da nessuna parte.",
+ noticeLead:"Prima di iniziare:",
+ noticeText:"chiudi il gioco e conserva una copia del <code>Rayman4.sav</code> originale in un'altra cartella. Se qualcosa va storto, basta rimettere la copia al suo posto.",
+ dropTitle:"Scegli il tuo file Rayman4.sav", dropSub:"oppure trascinalo qui",
+ scoreTitle:"Slot dei punti dei livelli bonus", of:"su 183.000",
+ maxall:"Imposta il massimo in tutti i giochi", dl:"Scarica il salvataggio modificato", reset:"Annulla le modifiche",
+ gamesTitle:"Minigiochi", onlyInc:"Mostra solo i giochi sotto il massimo",
+ thGame:"Gioco", thMode:"Punteggio", thRecord:"Record", thWas:"Prima", thNow:"Dopo",
+ foot:"I nomi dei livelli non sono salvati nel file, quindi i giochi sono indicati con un numero. Il numero corrisponde all'ordine dei minigiochi nel salvataggio.",
+ slotsTitle:"Slot nel file", afterTitle:"Dopo l'installazione",
+ step1:"Scarica il file modificato (mantiene il nome originale) e mettilo al posto del vecchio.",
+ step2:"Avvia il gioco e apri la sezione extra. Se i bonus non compaiono subito, completa una volta un livello bonus qualsiasi: il gioco ricalcolerà i punti e assegnerà le ricompense.",
+ opened:"File «{n}» aperto.",
+ E_NOSIG:"Questo non è un salvataggio cifrato di Rayman Raving Rabbids (manca la firma all'inizio del file).",
+ E_MODE2:"La cifratura «modalità 2» non è supportata.",
+ E_CORRUPT:"Il file è danneggiato o ha una struttura insolita.",
+ E_SIZE:"Dimensione del file inattesa. Serve un Rayman4.sav della versione Steam.",
+ E_VERIFY:"Il controllo di scrittura non è riuscito, il file non è stato salvato.",
+ modeRaw:"somma dei punti", modeHigh:"più alto è meglio", modeLow:"più basso è meglio",
+ nowIn:"Attualmente nel file: {a} punti",
+ delta:"Prima {a} → dopo {b} (in verde il guadagno)",
+ allMax:"Tutti i giochi sono già al massimo.",
+ gameN:"Gioco {n}", btnMax:"Massimo",
+ slotStory:"Storia, profilo {n}", slotScore:"Punti dei livelli bonus (modificato qui)", slotConfig:"Impostazioni",
+ maxDone:"Massimo impostato in {n} giochi. Ora scarica il file.",
+ resetDone:"Modifiche annullate.",
+ downloaded:"File «{n}» scaricato e verificato. Mettilo al posto del salvataggio originale."
+}};
+
+// ---------- интерфейс ----------
+const $=id=>document.getElementById(id);
+const SC=3;
+let lang='en',orig=null,origName='Rayman4.sav',body=null,body0=null,pts0=[],last=null;
+
+function t(k,p){
+  let s=(I18N[lang]&&I18N[lang][k])||I18N.en[k]||k;
+  if(p)for(const x in p)s=s.split('{'+x+'}').join(p[x]);
+  return s;
+}
+const fmt=n=>Math.round(n).toLocaleString(LOC[lang]);
+
+function paintMsg(){
+  const m=$('msg');
+  if(!last){m.className='msg hidden';return;}
+  m.textContent=t(last.key,last.p);m.className='msg'+(last.err?' err':'');
+}
+function show(key,p,err){last={key,p,err};paintMsg();}
+function hideMsg(){last=null;paintMsg();}
+
+function applyLang(l){
+  lang=I18N[l]?l:'en';
+  document.documentElement.lang=lang;
+  document.title='Rayman Raving Rabbids — '+t('scoreTitle');
+  document.querySelectorAll('[data-t]').forEach(e=>{e.textContent=t(e.getAttribute('data-t'));});
+  document.querySelectorAll('[data-h]').forEach(e=>{e.innerHTML=t(e.getAttribute('data-h'));});
+  $('lang').value=lang;
+  try{localStorage.setItem('rrrLang',lang);}catch(e){}
+  paintMsg();
+  if(body)render();
+}
+
+async function load(file){
+  hideMsg();
+  try{
+    const data=new Uint8Array(await file.arrayBuffer());
+    const b=decodeSav(data);
+    if(b.length!==BODYLEN) throw new Error('E_SIZE');
+    orig=data;origName=file.name||'Rayman4.sav';body=b;body0=new Uint8Array(b);
+    pts0=[];for(let i=0;i<NGAMES;i++)pts0.push(gameInfo(body0,SC,i).points);
+    $('work').classList.remove('hidden');
+    render();
+    show('opened',{n:origName});
+  }catch(e){
+    $('work').classList.add('hidden');
+    show(I18N.en[e.message]?e.message:'E_CORRUPT',null,true);
+  }
+}
+
+function modeLabel(g){return t(g.raw?'modeRaw':(g.hb?'modeHigh':'modeLow'));}
+function recLabel(g){
+  if(g.best===null) return '—';
+  const v=g.best; return g.raw||Math.abs(v)>=1000?fmt(v):(Math.round(v*100)/100).toLocaleString(LOC[lang]);
+}
+function differs(){for(let i=0;i<body.length;i++)if(body[i]!==body0[i])return true;return false;}
+
+function render(){
+  const infos=[];for(let i=0;i<NGAMES;i++)infos.push(gameInfo(body,SC,i));
+  const total=infos.reduce((a,g)=>a+g.points,0), total0=pts0.reduce((a,b)=>a+b,0);
+  $('tot').textContent=fmt(total);
+  const seg=50,m=$('meter');m.innerHTML='';
+  const onN=Math.floor(total0/FULL_TOTAL*seg), curN=Math.floor(total/FULL_TOTAL*seg);
+  for(let i=0;i<seg;i++){const e=document.createElement('i');if(i<onN)e.className='on';else if(i<curN)e.className='new';m.appendChild(e);}
+  $('metersub').textContent=total===total0?t('nowIn',{a:fmt(total0)}):t('delta',{a:fmt(total0),b:fmt(total)});
+  const changed=differs();
+  $('dl').disabled=!changed;$('reset').disabled=!changed;
+  $('maxall').disabled=total>=FULL_TOTAL;
+  const only=$('onlyinc').checked,tb=$('rows');tb.innerHTML='';
+  let shown=0;
+  for(const g of infos){
+    const full=g.points>=g.maxPoints;
+    if(only&&full)continue; shown++;
+    const tr=document.createElement('tr'),was=pts0[g.mid];
+    tr.innerHTML='<td>'+t('gameN',{n:g.mid+1})+'</td><td>'+modeLabel(g)+'</td><td>'+recLabel(g)+'</td><td>'+fmt(was)+'</td><td class="'+(g.points!==was?'chg':(full?'full':''))+'">'+fmt(g.points)+' / '+fmt(g.maxPoints)+'</td><td></td>';
+    if(!full){const b=document.createElement('button');b.className='small ghost';b.textContent=t('btnMax');b.onclick=()=>{setGameMax(body,SC,g.mid);render();};tr.lastChild.appendChild(b);}
+    tb.appendChild(tr);
+  }
+  if(!shown){tb.innerHTML='<tr><td colspan="6" style="text-align:center;padding:18px">'+t('allMax')+'</td></tr>';}
+  const ul=$('slots');ul.innerHTML='';
+  for(let s=0;s<NSLOTS;s++){
+    const li=document.createElement('li'),nm=slotName(body,s);
+    const role=s<3?t('slotStory',{n:s+1}):(s===3?t('slotScore'):t('slotConfig'));
+    li.textContent=role+(nm&&s<3?': '+nm:'');if(s===SC)li.className='main';ul.appendChild(li);
+  }
+}
+
+$('file').addEventListener('change',e=>{if(e.target.files[0])load(e.target.files[0]);});
+const drop=$('drop');
+['dragenter','dragover'].forEach(x=>drop.addEventListener(x,e=>{e.preventDefault();drop.classList.add('over');}));
+['dragleave','drop'].forEach(x=>drop.addEventListener(x,e=>{e.preventDefault();drop.classList.remove('over');}));
+drop.addEventListener('drop',e=>{const f=e.dataTransfer.files[0];if(f)load(f);});
+$('onlyinc').addEventListener('change',render);
+$('lang').addEventListener('change',e=>applyLang(e.target.value));
+$('maxall').onclick=()=>{const n=maxAll(body,SC);render();show('maxDone',{n});};
+$('reset').onclick=()=>{body=new Uint8Array(body0);render();show('resetDone');};
+$('dl').onclick=()=>{
+  try{
+    const enc=encodeSav(orig,body);
+    const back=decodeSav(enc);
+    for(let i=0;i<back.length;i++)if(back[i]!==body[i])throw new Error('E_VERIFY');
+    const blob=new Blob([enc],{type:'application/octet-stream'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=origName;
+    document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+    show('downloaded',{n:origName});
+  }catch(e){show(I18N.en[e.message]?e.message:'E_VERIFY',null,true);}
+};
+
+(function init(){
+  let l=null;
+  try{l=localStorage.getItem('rrrLang');}catch(e){}
+  if(!l||!I18N[l]){const n=((navigator.language||'en')+'').slice(0,2).toLowerCase();l=I18N[n]?n:'en';}
+  applyLang(l);
+})();
+</script>
+</body>
+</html>
