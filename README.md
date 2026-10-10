@@ -1,4 +1,4 @@
-# RRR_Bonus_Unlocker
+# Rayman Raving Rabbids Bonus Unlocker
 How to use:
 Find your save file (it’s in the game folder).
 Upload the file to the tool, apply the changes, and replace the original save file.
